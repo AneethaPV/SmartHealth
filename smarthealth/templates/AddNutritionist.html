@@ -1,0 +1,70 @@
+{% extends 'adminindex.html' %}
+
+{% block body %}
+<head>
+<!--<style>-->
+<!--thead {-->
+        <!--background-color: black;-->
+        <!--color: white;-->
+      <!--}-->
+<!--</style>-->
+</head>
+<div class="col-lg-8 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Add Nutritionist</h4>
+            <!--<p class="card-description"> Add class <code>.table-hover</code>-->
+            <!--</p>-->
+            <form class="forms-sample" id="form1" name="form1" method="post" action="{% url 'add_nutritionist1' %}" enctype="multipart/form-data">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                        <tr>
+                            <th>Name</th>
+                            <td><input type="text" class="form-control" name="textfield" /></td>
+                        </tr>
+                        <tr>
+                            <td>Image</td>
+                            <td><input type="file" class="form-control" name="file"/></td>
+                        </tr>
+                        <tr>
+                            <th>Email</th>
+                            <td><input type="text" class="form-control" name="textfield2" /></td>
+                        </tr>
+                        <tr>
+                            <th>Mobile</th>
+                            <td><input type="text" class="form-control" name="textfield3" /></td>
+                        </tr>
+                        <tr>
+                            <th>Gender</th>
+                            <td><select class="form-control" name="select1" required>
+                                <option>male</option>
+                                <option>female</option>
+                                </select></td>
+                        </tr>
+                        <tr>
+                            <th>Qualification</th>
+                            <td><input type="text" class="form-control" name="textfield4" /></td>
+                        </tr>
+                        <tr>
+                            <th>Experience</th>
+                            <td><input type="number" class="form-control" name="textfield5" /></td>
+                        </tr>
+                        <tr>
+                            <th>License</th>
+                            <td><input type="text" class="form-control" name="textfield6" /></td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td>
+                            <input class="btn btn-outline-primary btn-fw" type="submit" name="Submit" value="Add" />
+                            </td>
+                        </tr>
+                </table>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
