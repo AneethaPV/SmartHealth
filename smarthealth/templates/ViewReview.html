@@ -1,0 +1,64 @@
+{% extends 'adminindex.html' %}
+
+{% block body %}
+<head>
+<style>
+thead {
+        background-color: black;
+        color: white;
+      }
+</style>
+</head>
+<div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Review</h4>
+            <!--<p class="card-description"> Add class <code>.table-hover</code>-->
+            <!--</p>-->
+            <form class="forms-sample" id="form1" name="form1" method="post" action="{% url 'search' %}">
+            <div class="table-responsive">
+
+                <table class="table table-hover">
+                    <th>Nutritionist</th>
+                    <td>
+                        <select class="btn btn-secondary" name="select" required>
+                            <option value="">Select</option>
+                            {% for i in val %}
+                            <option value="{{i.id}}" {% if i.id == n %}selected{% endif %}>{{i.name}}</option>
+                            {% endfor %}
+                        </select>
+                        <button id="s" name="s">Search</button>
+                    </td>
+                </table>
+
+
+
+                <table class="table table-hover datatable" >
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>User</th>
+                            <th>Date</th>
+                            <th>Review</th>
+                            <th>Rating</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for i in val1 %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{i.date}}</td>
+                            <td>{{i.review}}</td>
+                            <td>{{i.rating}}</td>
+                            <td>{{i.uid.name}}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

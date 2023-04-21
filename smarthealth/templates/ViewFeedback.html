@@ -22,6 +22,7 @@ thead {
                             <th>No</th>
                             <th>User</th>
                             <th>Feedback</th>
+                            <th>Reply</th>
                             <th colspan="2">Action</th>
                         </tr>
                     </thead>
@@ -31,6 +32,7 @@ thead {
                             <td>{{forloop.counter}}</td>
                             <td>{{i.uid.name}}</td>
                             <td>{{i.feedback}}</td>
+                            <td>{{i.reply}}</td>
                             <td>
                                 {% if i.reply == 'pending' %}
                                 <a class="btn btn-outline-primary btn-fw" href="{% url 'reply_feedback' id=i.id %}">Reply</a>

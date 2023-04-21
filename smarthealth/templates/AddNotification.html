@@ -2,12 +2,27 @@
 
 {% block body %}
 <head>
-<!--<style>-->
-<!--thead {-->
-        <!--background-color: black;-->
-        <!--color: white;-->
-      <!--}-->
-<!--</style>-->
+    <script src="https://cdn.jsdelivr.net/timepicker.js/latest/timepicker.min.js"></script>
+<link href="https://cdn.jsdelivr.net/timepicker.js/latest/timepicker.min.css" rel="stylesheet"/>
+
+    <script>
+function tConvert (time) {
+  // Check correct time format and split into components
+  time = time.toString ().match (/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+
+  if (time.length > 1) { // If time format correct
+    time = time.slice (1);  // Remove full string match value
+    time[5] = +time[0] < 12 ? 'AM' : 'PM'; // Set AM/PM
+    time[0] = +time[0] % 12 || 12; // Adjust hours
+  }
+  return time.join (''); // return adjusted time or original string
+}
+
+tConvert ('18:00:00');
+    </script>
+<style>
+
+</style>
 </head>
 <div class="col-lg-12 grid-margin stretch-card">
     <div class="card">
@@ -26,7 +41,7 @@
                         </tr>
                         <tr>
                             <td>Time</td>
-                            <td><input type="time" class="form-control" name="textfield1"/></td>
+                            <td><input  type="time"  name="textfield1"/></td>
                         </tr>
                         <tr>
                             <td>&nbsp;</td>

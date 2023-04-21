@@ -18,18 +18,26 @@ class user(models.Model):
 class healthdetails(models.Model):
     lid=models.ForeignKey(login,on_delete=models.CASCADE)
     dob=models.DateField()
-    height=models.FloatField()
-    cweight=models.FloatField()
-    gweight=models.FloatField()
-    medcond=models.CharField(max_length=200)
-    bmi=models.FloatField()
+    height=models.IntegerField()
+    cweight=models.IntegerField()
+    bmi=models.IntegerField()
+
+
+
+class medicalcondition(models.Model):
+    lid = models.ForeignKey(login, on_delete=models.CASCADE)
+    date=models.DateField()
+    diabetes=models.CharField(max_length=10, default='0')
+    cholestrol=models.CharField(max_length=10, default='0')
+    pressure=models.CharField(max_length=10, default='0')
+
 
 
 class nutritionist(models.Model):
     name=models.CharField(max_length=30)
-    image=models.CharField(max_length=30)
+    image=models.FileField()
     email=models.CharField(max_length=30)
-    mobile=models.IntegerField()
+    mobile=models.BigIntegerField()
     gender=models.CharField(max_length=10)
     qualification=models.CharField(max_length=20)
     experience=models.IntegerField()
@@ -41,12 +49,18 @@ class reminder(models.Model):
     medicine=models.CharField(max_length=30)
     startdate=models.DateField()
     enddate=models.DateField()
-    dose=models.TimeField()
+    num=models.IntegerField()
+
+
+
+class doseinfo(models.Model):
+    mid=models.ForeignKey(reminder, on_delete=models.CASCADE)
+    time=models.CharField(max_length=200)
 
 
 class notification(models.Model):
     notification=models.CharField(max_length=50)
-    time=models.TimeField()
+    time=models.CharField(max_length=200)
 
 
 class feedback(models.Model):
@@ -58,8 +72,14 @@ class feedback(models.Model):
 
 class foodcalories(models.Model):
     food=models.CharField(max_length=30)
-    image=models.CharField(max_length=100)
+    image=models.FileField()
+    quantity = models.CharField(max_length=30)
     calories=models.IntegerField()
+    proteins = models.FloatField()
+    carbs = models.FloatField()
+    fats = models.FloatField()
+    fiber = models.FloatField()
+
 
 
 class calories(models.Model):
@@ -71,6 +91,15 @@ class calories(models.Model):
 
 
 class healthblog(models.Model):
-    blog=models.CharField(max_length=50)
-    image=models.CharField(max_length=100)
+    caption=models.CharField(max_length=50)
+    blog=models.CharField(max_length=500)
+    image=models.FileField()
     date=models.DateField()
+
+
+class reviewrating(models.Model):
+    uid=models.ForeignKey(user,on_delete=models.CASCADE)
+    nid = models.ForeignKey(nutritionist, on_delete=models.CASCADE)
+    review=models.CharField(max_length=60)
+    rating=models.FloatField()
+    date = models.DateField()

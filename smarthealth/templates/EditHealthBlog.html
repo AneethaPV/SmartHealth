@@ -15,14 +15,24 @@
             <h4 class="card-title">Edit HealthBlog</h4>
             <!--<p class="card-description"> Add class <code>.table-hover</code>-->
             <!--</p>-->
-            <form class="forms-sample" id="form1" name="form1" method="post" action="{% url 'edit_healthblog1' %}">
+            <form class="forms-sample" id="form1" name="form1" method="post" action="{% url 'edit_healthblog1' %}" enctype="multipart/form-data">
             <div class="table-responsive">
                 <table class="table table-hover">
+                        <tr>
+                            <th>Caption</th>
+                            <td>
+                            <input type="text" class="form-control" name="textfield2" value="{{val.caption}}"/>
+                            </td>
+                        </tr>
                         <tr>
                             <th>Blog</th>
                             <td>
                             <input type="text" class="form-control" name="textfield" value="{{val.blog}}"/>
                             </td>
+                        </tr>
+                        <tr>
+                            <th>Image</th>
+                            <td><input type="file" class="form-control" name="file" value="{{val.image}}"/>{{val.image}}</td>
                         </tr>
                         <tr>
                             <td>&nbsp;</td>

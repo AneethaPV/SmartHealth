@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Graph</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+</head>
+<body>
+<!--<b style="color:red;">Diabetes</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
+<!--<b style="color:blue;">Cholestrol</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
+<!--<b style="color:green;">Pressure</b>-->
+<!--<br><br><br>-->
+<canvas id="myChart" style="width:100%;max-width:600px;height:600px;"></canvas>
+
+<script>
+
+var xValues = [];
+{% for i in val %}
+xValues.push("{{i.d}}");
+{% endfor %}
+
+new Chart("myChart", {
+  type: "line",
+  data: {
+    labels: xValues,
+    datasets: [{
+      label: 'Diabetes',
+      data: {{s}},
+      borderColor: "red",
+      fill: false
+    }, {
+      label: 'Pressure',
+      data: {{p}},
+      borderColor: "green",
+      fill: false
+    }, {
+      label: 'Cholestrol',
+      data: {{c}},
+      borderColor: "blue",
+      fill: false
+    }]
+  },
+  options: {
+    legend: {display: true}
+
+  }
+});
+</script>
+
+
+</body>
+</html>
