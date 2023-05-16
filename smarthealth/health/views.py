@@ -4,8 +4,8 @@ from time import strftime
 
 from django.contrib import messages
 from django.core.files.storage import FileSystemStorage
-from django.http import HttpResponse
-from django.shortcuts import render
+from django.http import HttpResponse,JsonResponse
+from django.shortcuts import render, redirect
 # Create your views here.
 from health.models import *
 
@@ -14,6 +14,9 @@ import random
 
 from smarthealth.pp import predict
 
+
+def indexmain(request):
+    return render(request, "index.html")
 
 def logins(request):
     return render(request,"loginindex.html")
@@ -26,6 +29,9 @@ def adminlogin(request):
         ob=login.objects.get(username=username,password=password)
         if ob.usertype=='admin':
             return HttpResponse('''<script> alert("Welcome to Admin Homepage"); window.location='/home' </script>''')
+        elif ob.usertype=='nutritionist':
+            request.session['lid']=ob.id
+            return HttpResponse('''<script> alert("Welcome to Nutritionist Homepage"); window.location='/home1' </script>''')
         else:
             return HttpResponse('''<script> alert("Invalid"); window.location='/' </script>''')
     except Exception as e:
@@ -35,6 +41,74 @@ def adminlogin(request):
 
 def home(request):
     return render(request,"Home.html")
+
+def home1(request):
+    return render(request,"NutrHome.html")
+
+
+def nutr_home(request):
+    return render(request,"nutrindex.html")
+
+
+def nutr_profile(request):
+    ob = nutritionist.objects.get(lid__id=request.session['lid'])
+    return render(request,"NProfile.html",{'i': ob})
+
+
+def nutr_rev(request):
+    ob = reviewrating.objects.filter(nid__lid__id=request.session['lid'])
+    return render(request,"NReview.html",{'i': ob})
+
+def nutr_feedback(request):
+    return render(request,"NFeedback.html")
+
+def nutr_feedback1(request):
+    feedback1=request.POST['textfield']
+    ob=feedback()
+    ob.feedback=feedback1
+    ob.type='nutritionist'
+    ob.date=datetime.now()
+    ob.reply='pending'
+    ob.uid=login.objects.get(id=request.session['lid'])
+    ob.save()
+    return HttpResponse('''<script> alert("Sent successfully"); window.location='/nutr_feedback' </script>''')
+
+def nutr_chat(request):
+    from django.db import connection
+    cursor = connection.cursor()
+    cursor.execute(
+            "SELECT `health_user`.* FROM `health_user` JOIN `health_chat` ON `health_user`.`lid_id`=`health_chat`.`fromid_id` WHERE `health_chat`.`toid_id`="+str(request.session['lid'])+" GROUP BY `health_user`.`id`")
+    row = cursor.fetchall()
+    return render(request, "NChat.html",{'i': row})
+
+
+def chat2(request,id):
+    request.session['tid']=id
+    ob=user.objects.get(lid__id=id)
+    from django.db.models import Q
+    res = chat.objects.filter(
+        Q(fromid__id=request.session['lid'], toid__id=id) | Q(fromid__id=id, toid__id=request.session['lid'])).order_by('id')
+    return render(request, "chat2.html",{'name':ob.name,'val':res,'fr':request.session['lid']})
+
+
+def sendchat(request):
+    msg=request.POST['textarea']
+    ob = chat()
+    ob.toid = login.objects.get(id=request.session['tid'])
+    ob.fromid = login.objects.get(id=request.session['lid'])
+    ob.date = datetime.today()
+    ob.msg = msg
+    ob.save()
+    return redirect('nchat')
+
+
+def nchat(request):
+    id=request.session['tid']
+    ob=user.objects.get(lid__id=id)
+    from django.db.models import Q
+    res = chat.objects.filter(
+        Q(fromid__id=request.session['lid'], toid__id=id) | Q(fromid__id=id, toid__id=request.session['lid'])).order_by('id')
+    return render(request, "chat2.html",{'name':ob.name,'val':res,'fr':request.session['lid']})
 
 
 def view_user(request):
@@ -62,7 +136,13 @@ def add_nutritionist1(request):
     qualification = request.POST['textfield4']
     experience = request.POST['textfield5']
     license = request.POST['textfield6']
+    ob1=login()
+    ob1.username=email
+    ob1.password=mobile
+    ob1.usertype='nutritionist'
+    ob1.save()
     ob=nutritionist()
+    ob.lid=ob1
     ob.name=name
     ob.image=fp
     ob.email = email
@@ -72,7 +152,11 @@ def add_nutritionist1(request):
     ob.experience = experience
     ob.license = license
     ob.save()
+    send_mail('NUTRITIONIST LOGIN', "YOU can Login  - \n Username - " + str(email) + "\nPassword - " + str(mobile), 'aneethawork@gmail.com', [email],
+              fail_silently=False)
+    messages.info(request, "reply sent to your registered email address !!!")
     return HttpResponse('''<script> alert("Added successfully"); window.location='/view_nutritionist' </script>''')
+
 
 
 def edit_nutritionist(request,id):
@@ -307,9 +391,16 @@ def reply_feedback(request,id):
 def reply_feedback1(request):
     reply2=request.POST['textfield']
     ob=feedback.objects.get(id=request.session['fid'])
-    ob1=user.objects.get(id=ob.id)
-    mail = ob1.email
+    ob.reply=reply2
+    ob.save()
+    if ob.type == "user":
+        ob1=user.objects.get(lid__id=ob.uid.id)
+        mail = ob1.email
+    else:
+        ob1 = nutritionist.objects.get(lid__id=ob.uid.id)
+        mail = ob1.email
     print(mail,"++++++++++++++++++++++")
+
     send_mail('FEEDBACK REPLY', "FEEDBACK REPLY IS  -" + str(reply2), 'aneethawork@gmail.com', [mail], fail_silently=False)
     messages.info(request, "reply sent to your registered email address !!!")
     return HttpResponse('''<script> alert("Replied successfully"); window.location='/view_feedback' </script>''')
@@ -340,22 +431,63 @@ def reply_feedback1(request):
 
 
 def graph(request,id):
-    ob = medicalcondition.objects.filter(lid__id=id)
-    c=[]
-    s=[]
-    p=[]
-    for i in ob:
+    id=str(id).split("-")
+    print(id,"+================================")
+    if id[1]=="Daily":
+        ob = medicalcondition.objects.filter(lid__id=int(id[0]))
+        c=[]
+        s=[]
+        p=[]
+        for i in ob:
+            c.append(int(i.cholestrol))
+            s.append(int(i.diabetes))
+            p.append(int(i.pressure))
+            i.d=str(i.date)
+        return render(request, "Graph.html", {'val': ob,"c":c,"p":p,"s":s})
+    elif id[1]=="Monthly":
+        from django.db import connection
+        cursor = connection.cursor()
+        cursor.execute(
+            "SELECT AVG(`diabetes`),AVG(`cholestrol`),AVG(`pressure`),MONTH(`date`) AS m,YEAR(`date`) AS ye FROM `health_medicalcondition` WHERE `lid_id`="+str(id[0])+" GROUP BY m,ye ORDER BY ye ASC,m ASC")
+        row = cursor.fetchall()
+        lis=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+        ob =[]
+        c=[]
+        s=[]
+        p=[]
+        for i in row:
+            c.append(int(i[1]))
+            s.append(int(i[0]))
+            p.append(int(i[2]))
+            r={"d":lis[int(i[3])-1]+"-"+str(i[4])}
+            ob.append(r)
+        return render(request, "Graph.html", {'val': ob,"c":c,"p":p,"s":s})
+    else:
+        from django.db import connection
+        cursor = connection.cursor()
+        cursor.execute(
+            "SELECT AVG(`diabetes`),AVG(`cholestrol`),AVG(`pressure`),YEAR(`date`) AS m FROM `health_medicalcondition` WHERE `lid_id`="+str(id[0])+" GROUP BY m ORDER BY m ASC")
+        row = cursor.fetchall()
+        ob=[]
+        c = []
+        s = []
+        p = []
+        for i in row:
+            c.append(int(i[1]))
+            s.append(int(i[0]))
+            p.append(int(i[2]))
+            r = {"d": i[3]}
+            ob.append(r)
+        return render(request, "Graph.html", {'val': ob, "c": c, "p": p, "s": s})
 
-        c.append(int(i.cholestrol))
-        s.append(int(i.diabetes))
-        p.append(int(i.pressure))
-        i.d=str(i.date)
-    return render(request, "Graph.html", {'val': ob,"c":c,"p":p,"s":s})
 
 
 
+def docname(request):
+    doc = nutritionist.objects.get(lid=request.session['lid'])
+    print(doc.name,"==========================")
 
-
+    return JsonResponse({"message":"success","name":doc.name})
 
 
 
@@ -449,14 +581,14 @@ def hinfo(request):
     diabetes1 = request.POST['diabetes']
     cholestrol1 = request.POST['cholestrol']
     pressure1 = request.POST['pressure']
-    hd = request.POST['hd']
+    # hd = request.POST['hd']
     print(lid,dob1,height1,cweight1,"=================================")
     hob=healthdetails()
     hob.dob=dob1
     hob.height=height1
     hob.cweight=cweight1
     hob.bmi=(int(cweight1)/(int(height1)*int(height1)))*10000
-    hob.hd=hd
+    # hob.hd=hd
     hob.lid=login.objects.get(id=lid)
     hob.save()
     mob=medicalcondition()
@@ -720,7 +852,8 @@ def medcond(request):
     id = request.POST['lid']
     print(id)
     from django.db.models import Max
-    obb=medicalcondition.objects.aggregate(Max('id'))
+    obb=medicalcondition.objects.filter(lid__id=id).aggregate(Max('id'))
+    print(obb,"=================================")
     i = medicalcondition.objects.get(id=obb['id__max'])
     data = []
     row = {"diabetes": i.diabetes, "cholestrol": i.cholestrol, "pressure": i.pressure,"id": i.lid.id}
@@ -782,7 +915,7 @@ def pics(request):
 
 
 def addfeedback(request):
-    try:
+    # try:
         print(request.POST)
         lid = request.POST['lid']
         feedbacks = request.POST['feedback']
@@ -791,23 +924,23 @@ def addfeedback(request):
         fob.feedback = feedbacks
         fob.date = datetime.today()
         fob.reply='pending'
-
-        fob.uid = user.objects.get(lid__id=lid)
+        fob.type='user'
+        fob.uid = login.objects.get(id=lid)
         fob.save()
         data = {"task": "success"}
         r = json.dumps(data)
         return HttpResponse(r)
-    except Exception as e:
-        data = {"task": "incorrect format"}
-        r = json.dumps(data)
-        return HttpResponse(r)
+    # except Exception as e:
+    #     data = {"task": "incorrect format"}
+    #     r = json.dumps(data)
+    #     return HttpResponse(r)
 
 
 def nutritionistdata(request):
     res=nutritionist.objects.all()
     data=[]
     for i in res:
-        row={"name":i.name,"image":str(i.image),"email":i.email,"mobile":i.mobile,"gender":i.gender,"qualification":i.qualification,"experience":i.experience,"license":i.license,"nid":i.id}
+        row={"name":i.name,"image":str(i.image),"email":i.email,"mobile":i.mobile,"gender":i.gender,"qualification":i.qualification,"experience":i.experience,"license":i.license,"nid":i.lid.id}
         data.append(row)
     r=json.dumps(data)
     print(r,"==============================")
@@ -924,7 +1057,7 @@ def rating(request):
     ob.review=review
     ob.date=datetime.today()
     ob.uid = user.objects.get(lid__id=lid)
-    ob.nid = nutritionist.objects.get(id=nid)
+    ob.nid = nutritionist.objects.get(lid__id=nid)
     ob.save()
     data = {'task': 'success'}
     r = json.dumps(data)
@@ -932,20 +1065,22 @@ def rating(request):
 
 
 
-
-
-
 def nutrreview(request):
     from django.db import connection
     cursor = connection.cursor()
     nid = request.POST['nid']
-    cursor.execute("SELECT AVG(`health_reviewrating`.`rating`) FROM `health_nutritionist` LEFT JOIN `health_reviewrating` ON `health_nutritionist`.id = `health_reviewrating`.nid_id WHERE `health_nutritionist`.`id`='"+nid+"'")
+    cursor.execute("SELECT AVG(`health_reviewrating`.`rating`) FROM `health_nutritionist` LEFT JOIN `health_reviewrating` ON `health_nutritionist`.id = `health_reviewrating`.nid_id WHERE `health_nutritionist`.`lid_id`='"+nid+"'")
     row = cursor.fetchone()
     print(row[0])
-    data = {'rating': row[0]}
+    if row[0] is None:
+        rating=0
+    else:
+        rating=row[0]
+    data = {'rating': rating}
     r=json.dumps(data)
     print(r,"==============================")
     return HttpResponse(r)
+
 
 
 def predict1(request):
@@ -972,3 +1107,40 @@ def predict1(request):
     r = json.dumps(data)
     return HttpResponse(r)
 
+def in_message(request):
+    fid=request.POST['fid']
+    tid = request.POST['toid']
+    msg = request.POST['msg']
+    ob=chat()
+    ob.toid=login.objects.get(id=tid)
+    ob.fromid=login.objects.get(id=fid)
+    ob.date=datetime.today()
+    ob.msg=msg
+    ob.save()
+    data = {'status': 'send'}
+    r=json.dumps(data)
+    return HttpResponse(r)
+
+def view_message(request):
+    fromid = request.POST['fid']
+    print(fromid,"frrrrrrrrrrrr")
+    toid = request.POST['toid']
+    print(toid,"tyyyyyyyyyyyy")
+    lmid = request.POST['lastmsgid']
+    print(lmid,"lmiiiiiiiiiiiiiiiiiiiiii")
+    from django.db.models import Q
+    res = chat.objects.filter(Q(fromid__id=fromid,toid__id=toid,id__gt=lmid)|Q(fromid__id=toid,toid__id=fromid,id__gt=lmid))
+    data = []
+    for i in res:
+        row = {"fromid": i.fromid.id, "message": str(i.msg), "date":str(i.date), "msgid": i.id}
+        data.append(row)
+    # r = json.dumps(data)
+    print(res)
+    if res is not None:
+        data = {'status': 'ok','res1':data}
+        r = json.dumps(data)
+        return HttpResponse(r)
+    else:
+        data = {'status': 'not found'}
+        r = json.dumps(data)
+        return HttpResponse(r)

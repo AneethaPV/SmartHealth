@@ -3,9 +3,23 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.logins),
+    path('', views.indexmain),
     path('adminlogin',views.adminlogin,name="adminloginn"),
+    path('logins',views.logins,name="logins"),
     path('home', views.home,name="home"),
+    path('indexmain', views.indexmain,name="indexmain"),
+
+    path('home1', views.home1,name="home1"),
+    path('nutr_home', views.nutr_home,name="nutr_home"),
+    path('nutr_profile', views.nutr_profile,name="nutr_profile"),
+    path('nutr_rev', views.nutr_rev,name="nutr_rev"),
+    path('nutr_feedback', views.nutr_feedback,name="nutr_feedback"),
+    path('nutr_feedback1', views.nutr_feedback1,name="nutr_feedback1"),
+    path('nutr_chat', views.nutr_chat,name="nutr_chat"),
+    path('chat2/<int:id>', views.chat2,name="chat2"),
+    path('sendchat', views.sendchat,name="sendchat"),
+    path('nchat', views.nchat,name="nchat"),
+    path('docname', views.docname, name="docname"),
 
     path('view_user', views.view_user,name="view_user"),
 
@@ -41,7 +55,7 @@ urlpatterns = [
     path('reply_feedback/<int:id>', views.reply_feedback,name="reply_feedback"),
     path('reply_feedback1', views.reply_feedback1,name="reply_feedback1"),
 
-    path('graph/<int:id>', views.graph,name="graph"),
+    path('graph/<str:id>', views.graph,name="graph"),
 
     path('view_review', views.view_review,name="view_review"),
 
@@ -106,4 +120,7 @@ urlpatterns = [
 
     path('predict', views.predict, name="predict"),
     path('predict1', views.predict1, name="predict1"),
+
+    path('in_message', views.in_message, name="in_message"),
+    path('view_message', views.view_message, name="view_message"),
 ]

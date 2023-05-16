@@ -1,0 +1,101 @@
+{% extends 'nutrindex.html' %}
+
+{% block body %}
+<head>
+<style>
+th {
+        background-color: white;
+        color: white;
+      }
+</style>
+</head>
+<div class="col-lg-16 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Profile</h4>
+            <!--<p class="card-description"> Add class <code>.table-hover</code>-->
+            <!--</p>-->
+            <form class="forms-sample" id="form1" name="form1" method="post" action="{% url 'add_nutritionist' %}" enctype="multipart/form-data">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                        <tr>
+                            <th>Name</th>
+                            <td>{{i.name}}</td>
+                        </tr>
+                        <tr>
+                            <th>Image</th>
+                            <td><img src="{{i.image.url}}" width="50px" height="50px"/></td>
+                        </tr>
+                        <tr>
+                            <th>Email</th>
+                            <td>{{i.email}}</td>
+                        </tr>
+                        <tr>
+                            <th>Mobile</th>
+                            <td>{{i.mobile}}</td>
+                        </tr>
+                        <tr>
+                            <th>Gender</th>
+                            <td>{{i.gender}}</td>
+                        </tr>
+                        <tr>
+                            <th>Qualif</th>
+                             <td>{{i.qualification}}</td>
+                        </tr>
+                        <tr>
+                            <th>Exp</th>
+                            <td>{{i.experience}}</td>
+                        </tr>
+                        <tr>
+                            <th>Lno</th>
+                            <td>{{i.license}}</td>
+                        </tr>
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+
+<!--<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">-->
+<!--<html xmlns="http://www.w3.org/1999/xhtml">-->
+<!--<head>-->
+<!--<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />-->
+<!--<title>Untitled Document</title>-->
+<!--</head>-->
+
+<!--<body>-->
+<!--<form>-->
+<!--<table width="455" border="1">-->
+  <!--<tr>-->
+    <!--<td width="20">No</td>-->
+    <!--<td width="37">Name</td>-->
+    <!--<td width="37">Image</td>-->
+    <!--<td width="33">Email</td>-->
+    <!--<td width="43">Mobile</td>-->
+    <!--<td width="45">Gender</td>-->
+    <!--<td width="28">Qualification</td>-->
+    <!--<td width="10">Experiennce</td>-->
+    <!--<td width="7">License</td>-->
+  <!--</tr>-->
+  <!--{% for i in val %}-->
+  <!--<tr>-->
+    <!--<td>{{forloop.counter}}</td>-->
+    <!--<td>{{i.name}}</td>-->
+    <!--<td>{{i.image}}</td>-->
+    <!--<td>{{i.email}}</td>-->
+    <!--<td>{{i.mobile}}</td>-->
+    <!--<td>{{i.gender}}</td>-->
+    <!--<td>{{i.qualification}}</td>-->
+    <!--<td>{{i.experience}}</td>-->
+    <!--<td>{{i.license}}</td>-->
+  <!--</tr>-->
+  <!--{% endfor %}-->
+<!--</table>-->
+<!--</form>-->
+<!--</body>-->
+<!--</html>-->

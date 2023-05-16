@@ -27,7 +27,7 @@ thead {
                             <option value="{{i.id}}" {% if i.id == n %}selected{% endif %}>{{i.name}}</option>
                             {% endfor %}
                         </select>
-                        <button id="s" name="s">Search</button>
+                        <button class="btn btn-outline-primary btn-fw" id="s" name="s">Search</button>
                     </td>
                 </table>
 
@@ -47,10 +47,10 @@ thead {
                     {% for i in val1 %}
                         <tr>
                             <td>{{forloop.counter}}</td>
+                            <td>{{i.uid.name}}</td>
                             <td>{{i.date}}</td>
                             <td>{{i.review}}</td>
                             <td>{{i.rating}}</td>
-                            <td>{{i.uid.name}}</td>
                         </tr>
                     {% endfor %}
                     </tbody>

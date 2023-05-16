@@ -34,6 +34,7 @@ class medicalcondition(models.Model):
 
 
 class nutritionist(models.Model):
+    lid = models.ForeignKey(login, on_delete=models.CASCADE)
     name=models.CharField(max_length=30)
     image=models.FileField()
     email=models.CharField(max_length=30)
@@ -64,10 +65,11 @@ class notification(models.Model):
 
 
 class feedback(models.Model):
-    uid=models.ForeignKey(user, on_delete=models.CASCADE)
+    uid=models.ForeignKey(login, on_delete=models.CASCADE)
     feedback=models.CharField(max_length=30)
     date=models.DateField()
     reply=models.CharField(max_length=30)
+    type=models.CharField(max_length=30)
 
 
 class foodcalories(models.Model):
@@ -82,12 +84,11 @@ class foodcalories(models.Model):
 
 
 
-class calories(models.Model):
-    lid = models.ForeignKey(login, on_delete=models.CASCADE)
+class chat(models.Model):
+    fromid=models.ForeignKey(login, on_delete=models.CASCADE,related_name='fid')
+    toid=models.ForeignKey(login, on_delete=models.CASCADE,related_name='tid')
+    msg = models.TextField()
     date=models.DateField()
-    breakfast=models.IntegerField()
-    lunch = models.IntegerField()
-    dinner=models.IntegerField()
 
 
 class healthblog(models.Model):

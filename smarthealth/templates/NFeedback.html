@@ -1,0 +1,40 @@
+{% extends 'nutrindex.html' %}
+
+{% block body %}
+<head>
+<style>
+thead {
+        background-color: black;
+        color: white;
+      }
+</style>
+</head>
+<div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Feedback</h4>
+            <!--<p class="card-description"> Add class <code>.table-hover</code>-->
+            <!--</p>-->
+            <form class="forms-sample" id="form1" name="form1" method="post" action="{% url 'nutr_feedback1' %}">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                        <tr>
+                            <th>Feedback</th>
+                            <td>
+                            <input type="text" class="form-control" name="textfield" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td>
+                            <input class="btn btn-outline-primary btn-fw" type="submit" name="Submit" value="Send" />
+                            </td>
+                        </tr>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

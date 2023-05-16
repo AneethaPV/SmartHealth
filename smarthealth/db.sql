@@ -58,7 +58,7 @@ CREATE TABLE `auth_permission` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `auth_permission_content_type_id_codename_01ab375a_uniq` (`content_type_id`,`codename`),
   CONSTRAINT `auth_permission_content_type_id_2f476e4b_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=77 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=81 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `auth_permission` */
 
@@ -138,7 +138,11 @@ insert  into `auth_permission`(`id`,`name`,`content_type_id`,`codename`) values
 (73,'Can add reviewrating',19,'add_reviewrating'),
 (74,'Can change reviewrating',19,'change_reviewrating'),
 (75,'Can delete reviewrating',19,'delete_reviewrating'),
-(76,'Can view reviewrating',19,'view_reviewrating');
+(76,'Can view reviewrating',19,'view_reviewrating'),
+(77,'Can add chat',20,'add_chat'),
+(78,'Can change chat',20,'change_chat'),
+(79,'Can delete chat',20,'delete_chat'),
+(80,'Can view chat',20,'view_chat');
 
 /*Table structure for table `auth_user` */
 
@@ -229,7 +233,7 @@ CREATE TABLE `django_content_type` (
   `model` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `django_content_type_app_label_model_76bd3d3b_uniq` (`app_label`,`model`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `django_content_type` */
 
@@ -240,6 +244,7 @@ insert  into `django_content_type`(`id`,`app_label`,`model`) values
 (4,'auth','user'),
 (5,'contenttypes','contenttype'),
 (18,'health','calories'),
+(20,'health','chat'),
 (17,'health','doseinfo'),
 (16,'health','feedback'),
 (7,'health','foodcalories'),
@@ -264,7 +269,7 @@ CREATE TABLE `django_migrations` (
   `name` varchar(255) NOT NULL,
   `applied` datetime(6) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `django_migrations` */
 
@@ -298,7 +303,10 @@ insert  into `django_migrations`(`id`,`app`,`name`,`applied`) values
 (27,'health','0009_reviewrating','2023-04-11 11:15:03.702607'),
 (28,'health','0010_reviewrating_nid','2023-04-17 09:31:10.605394'),
 (29,'health','0011_auto_20230420_2038','2023-04-20 15:11:11.648141'),
-(30,'health','0012_remove_healthdetails_hd','2023-04-20 16:40:26.234146');
+(30,'health','0012_remove_healthdetails_hd','2023-04-20 16:40:26.234146'),
+(31,'health','0013_nutritionist_lid','2023-04-28 06:07:34.208379'),
+(32,'health','0014_auto_20230428_1713','2023-04-28 11:44:06.076647'),
+(33,'health','0015_feedback_type','2023-05-04 10:23:46.543422');
 
 /*Table structure for table `django_session` */
 
@@ -315,25 +323,46 @@ CREATE TABLE `django_session` (
 /*Data for the table `django_session` */
 
 insert  into `django_session`(`session_key`,`session_data`,`expire_date`) values 
-('perc2feohehup5qr4lkjdr6e5wl0syxj','eyJoaWQiOjEsImZpZCI6MiwibmlkIjo1fQ:1ppW4Z:xbx-ZkLpB3oYVWsBGcUUOuiVgqtHZD65C4SMDu98mqI','2023-05-04 15:19:47.576072');
+('ftmbeljjplivtqd72674y4ctxeooo6ea','eyJmaWQiOjksImxpZCI6MTZ9:1puWPd:5VOkxbICguw6N-khdYPIqcCLNjCuXYXuPGxf-mt4JMo','2023-05-18 10:42:13.430133'),
+('perc2feohehup5qr4lkjdr6e5wl0syxj','.eJyrVsrITFGyMtFRSgPRRjpKeSDaVEcpB0QbmukolYAYxrUA9_8LcQ:1puVyW:YdoVsFjTkrcHUxD6uMAdno7PE3sO7a3yoCke3MPIpdc','2023-05-18 10:14:12.795088');
 
-/*Table structure for table `health_calories` */
+/*Table structure for table `health_chat` */
 
-DROP TABLE IF EXISTS `health_calories`;
+DROP TABLE IF EXISTS `health_chat`;
 
-CREATE TABLE `health_calories` (
+CREATE TABLE `health_chat` (
   `id` bigint NOT NULL AUTO_INCREMENT,
+  `msg` longtext NOT NULL,
   `date` date NOT NULL,
-  `breakfast` int NOT NULL,
-  `lunch` int NOT NULL,
-  `dinner` int NOT NULL,
-  `lid_id` bigint NOT NULL,
+  `fromid_id` bigint NOT NULL,
+  `toid_id` bigint NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `health_calories_lid_id_a97e4f0e_fk_health_login_id` (`lid_id`),
-  CONSTRAINT `health_calories_lid_id_a97e4f0e_fk_health_login_id` FOREIGN KEY (`lid_id`) REFERENCES `health_login` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `health_chat_fromid_id_b232f7a9_fk_health_login_id` (`fromid_id`),
+  KEY `health_chat_toid_id_3ecfa67b_fk_health_login_id` (`toid_id`),
+  CONSTRAINT `health_chat_fromid_id_b232f7a9_fk_health_login_id` FOREIGN KEY (`fromid_id`) REFERENCES `health_login` (`id`),
+  CONSTRAINT `health_chat_toid_id_3ecfa67b_fk_health_login_id` FOREIGN KEY (`toid_id`) REFERENCES `health_login` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-/*Data for the table `health_calories` */
+/*Data for the table `health_chat` */
+
+insert  into `health_chat`(`id`,`msg`,`date`,`fromid_id`,`toid_id`) values 
+(1,'hiiii','2023-04-28',3,16),
+(2,'rycg','2023-05-04',3,16),
+(3,'hiiiii','2023-05-04',16,3),
+(4,'rfd','2023-05-04',3,16),
+(5,'heyyyyyyy','2023-05-04',16,3),
+(6,'haai','2023-05-04',3,17),
+(8,'okkk','2023-05-04',17,3),
+(9,'hyyy','2023-05-04',17,3),
+(10,'hello','2023-05-04',17,3),
+(11,'aaaaaaaaaaaaaaaaa','2023-05-04',16,3),
+(12,'okk','2023-05-04',3,17),
+(13,'hy','2023-05-04',3,17),
+(14,'joo','2023-05-04',3,17),
+(15,'hooo','2023-05-04',3,17),
+(16,'fhhh','2023-05-04',3,17),
+(17,'hjk','2023-05-04',3,17),
+(18,'hhj','2023-05-04',3,17);
 
 /*Table structure for table `health_doseinfo` */
 
@@ -346,14 +375,17 @@ CREATE TABLE `health_doseinfo` (
   PRIMARY KEY (`id`),
   KEY `health_doseinfo_mid_id_4bcd63a1_fk_health_reminder_id` (`mid_id`),
   CONSTRAINT `health_doseinfo_mid_id_4bcd63a1_fk_health_reminder_id` FOREIGN KEY (`mid_id`) REFERENCES `health_reminder` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `health_doseinfo` */
 
 insert  into `health_doseinfo`(`id`,`time`,`mid_id`) values 
 (1,'09:00:00',63),
 (2,'13:00:00',63),
-(3,'17:00:00',63);
+(3,'17:00:00',63),
+(4,'09:00:00',64),
+(5,'15:00:00',64),
+(6,'21:00:00',66);
 
 /*Table structure for table `health_feedback` */
 
@@ -365,15 +397,16 @@ CREATE TABLE `health_feedback` (
   `date` date NOT NULL,
   `reply` varchar(30) NOT NULL,
   `uid_id` bigint NOT NULL,
+  `type` varchar(30) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `health_feedback_uid_id_5a61f679_fk_health_user_id` (`uid_id`),
-  CONSTRAINT `health_feedback_uid_id_5a61f679_fk_health_user_id` FOREIGN KEY (`uid_id`) REFERENCES `health_user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `health_feedback_uid_id_5a61f679_fk_health_user_id` (`uid_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `health_feedback` */
 
-insert  into `health_feedback`(`id`,`feedback`,`date`,`reply`,`uid_id`) values 
-(2,'Good app','2023-03-31','pending',2);
+insert  into `health_feedback`(`id`,`feedback`,`date`,`reply`,`uid_id`,`type`) values 
+(7,'good','2023-05-04','okkk',3,'user'),
+(9,'Very Good','2023-05-04','aaaaaaaaaaaaaaaaaaaaaaa',16,'nutritionist');
 
 /*Table structure for table `health_foodcalories` */
 
@@ -416,9 +449,9 @@ CREATE TABLE `health_healthblog` (
 /*Data for the table `health_healthblog` */
 
 insert  into `health_healthblog`(`id`,`caption`,`blog`,`image`,`date`) values 
-(1,'Daily Fitness','Physical fitness is a state of health and well-being and, more specifically, the ability to perform aspects of sports, occupations and daily activities. Physical fitness is generally achieved through proper nutrition,[1] moderate-vigorous physical exercise,[2] and sufficient rest along with a formal recovery plan.[3]  Before the Industrial Revolution, fitness was defined as the capacity to carry out the day\'s activities without undue fatigue or lethargy. However, with automation and changes in l','h1_u3o7gqV.jpg','2023-03-31'),
-(2,'Protein Diet','Proteins are essential nutrients for the human body.[1] They are one of the building blocks of body tissue and can also serve as a fuel source. As a fuel, proteins provide as much energy density as carbohydrates: 4 kcal (17 kJ) per gram; in contrast, lipids provide 9 kcal (37 kJ) per gram. The most important aspect and defining characteristic of protein from a nutritional standpoint is its amino acid composition.[2]  Proteins are polymer chains made of amino acids linked together by peptide bond','h3_1H5ya0K.jpg','2023-03-31'),
-(3,'Importance of Yoga','Yoga is a group of physical, mental, and spiritual practices or disciplines which originated in ancient India and aim to control (yoke) and still the mind, recognizing a detached witness-consciousness untouched by the mind (Chitta) and mundane suffering (Duḥkha). There is a wide variety of schools of yoga, practices, and goals[2] in Hinduism, Buddhism, and Jainism,[3][4][5] and traditional and modern yoga is practic','h2_wsX5upC.jpg','2023-03-31');
+(1,'Daily Fitness','Physical fitness is a state of health and well-being and, more specifically, the ability to perform aspects of sports, occupations and daily activities. Physical fitness is generally achieved through proper nutrition, moderate-vigorous physical exercise, and sufficient rest along with a formal recovery plan. Before the Industrial Revolution, fitness was defined as the capacity to carry out the day\'s activities without undue fatigue or lethargy. However, with automation and changes in l','h1_u3o7gqV.jpg','2023-03-31'),
+(2,'Protein Diet','Proteins are essential nutrients for the human body. They are one of the building blocks of body tissue and can also serve as a fuel source. As a fuel, proteins provide as much energy density as carbohydrates: 4 kcal (17 kJ) per gram; in contrast, lipids provide 9 kcal (37 kJ) per gram. The most important aspect and defining characteristic of protein from a nutritional standpoint is its amino acid composition.  Proteins are polymer chains made of amino acids linked together by peptide bond','h3_1H5ya0K.jpg','2023-03-31'),
+(3,'Importance of Yoga','Yoga is a group of physical, mental, and spiritual practices or disciplines which originated in ancient India and aim to control (yoke) and still the mind, recognizing a detached witness-consciousness untouched by the mind (Chitta) and mundane suffering (Duḥkha). There is a wide variety of schools of yoga, practices, and goals in Hinduism, Buddhism, and Jainism, and traditional and modern yoga is practic','h2_wsX5upC.jpg','2023-03-31');
 
 /*Table structure for table `health_healthdetails` */
 
@@ -434,7 +467,7 @@ CREATE TABLE `health_healthdetails` (
   PRIMARY KEY (`id`),
   KEY `health_healthdetails_lid_id_9d5a69f3_fk_health_login_id` (`lid_id`),
   CONSTRAINT `health_healthdetails_lid_id_9d5a69f3_fk_health_login_id` FOREIGN KEY (`lid_id`) REFERENCES `health_login` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `health_healthdetails` */
 
@@ -442,7 +475,8 @@ insert  into `health_healthdetails`(`id`,`dob`,`height`,`cweight`,`bmi`,`lid_id`
 (1,'2007-03-31',150,45,20,3),
 (16,'2000-12-18',175,50,16,11),
 (17,'2000-03-10',150,56,24,12),
-(18,'2000-02-11',150,59,26,13);
+(18,'2000-02-11',150,59,26,13),
+(19,'2001-04-05',155,56,23,18);
 
 /*Table structure for table `health_login` */
 
@@ -454,7 +488,7 @@ CREATE TABLE `health_login` (
   `password` varchar(30) NOT NULL,
   `usertype` varchar(30) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `health_login` */
 
@@ -463,7 +497,10 @@ insert  into `health_login`(`id`,`username`,`password`,`usertype`) values
 (3,'aneetha','anu','user'),
 (11,'sanan','sanu','user'),
 (12,'amii','amee','user'),
-(13,'rani','rano','user');
+(13,'rani','rano','user'),
+(16,'anuaneetha2000@gmail.com','8848644022','nutritionist'),
+(17,'shajinik75@gmail.com','9400979650','nutritionist'),
+(18,'sham','shamna','user');
 
 /*Table structure for table `health_medicalcondition` */
 
@@ -479,21 +516,23 @@ CREATE TABLE `health_medicalcondition` (
   PRIMARY KEY (`id`),
   KEY `health_medicalcondition_lid_id_678800e4_fk_health_login_id` (`lid_id`),
   CONSTRAINT `health_medicalcondition_lid_id_678800e4_fk_health_login_id` FOREIGN KEY (`lid_id`) REFERENCES `health_login` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `health_medicalcondition` */
 
 insert  into `health_medicalcondition`(`id`,`date`,`diabetes`,`cholestrol`,`pressure`,`lid_id`) values 
-(2,'2023-03-30','10','20','30',3),
-(3,'2023-04-06','20','100','120',3),
+(2,'2023-01-30','10','20','30',3),
 (6,'2023-04-13','30','40','140',3),
 (7,'2023-04-13','10','10','10',11),
 (8,'2023-04-13','10','100','10',3),
 (9,'2023-04-13','10','100','30',3),
 (10,'2023-04-13','10','100','300',3),
-(16,'2023-04-13','0','0','0',12),
+(16,'2023-03-13','0','0','0',12),
 (17,'2023-04-13','0','0','0',13),
-(19,'2023-04-18','0','0','200',3);
+(19,'2023-04-18','0','0','200',3),
+(20,'2023-04-28','0','0','200',12),
+(21,'2023-04-28','0','120','0',18),
+(23,'2023-04-28','0','150','200',18);
 
 /*Table structure for table `health_notification` */
 
@@ -511,8 +550,8 @@ CREATE TABLE `health_notification` (
 insert  into `health_notification`(`id`,`notification`,`time`) values 
 (1,'Morning breakfast','13:07'),
 (2,'Lunch','13:10'),
-(3,'Evening','13:14'),
-(5,'Haaai','13:18');
+(3,'Evening','16:56'),
+(5,'Drink water ','13:18');
 
 /*Table structure for table `health_nutritionist` */
 
@@ -528,15 +567,17 @@ CREATE TABLE `health_nutritionist` (
   `qualification` varchar(20) NOT NULL,
   `experience` int NOT NULL,
   `license` varchar(30) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `lid_id` bigint NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `health_nutritionist_lid_id_c463c4c4_fk_health_login_id` (`lid_id`),
+  CONSTRAINT `health_nutritionist_lid_id_c463c4c4_fk_health_login_id` FOREIGN KEY (`lid_id`) REFERENCES `health_login` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `health_nutritionist` */
 
-insert  into `health_nutritionist`(`id`,`name`,`image`,`email`,`mobile`,`gender`,`qualification`,`experience`,`license`) values 
-(1,'Sooraj','dcr1_4d38ByB.jpg','sooraj@gmail.com',8848644022,'male','MSc Dietetics',3,'DFGHH56789'),
-(2,'Nimmi','dcr2_u3DTWwE.jpg','nimmi@gmail.com',9061697367,'female','Msc Nutrition',4,'RTYUI6788'),
-(3,'Soorya','dcr3_q53GrZw.jpg','soorya@gmail.com',9400979650,'male','Msc Dietetics',7,'FGHJKK7890');
+insert  into `health_nutritionist`(`id`,`name`,`image`,`email`,`mobile`,`gender`,`qualification`,`experience`,`license`,`lid_id`) values 
+(4,'Aneeth','dcr1_3NAiiA0.jpg','anuaneetha2000@gmail.com',8848644022,'male','MSc Dietetics',5,'ASDFG56789',16),
+(5,'Nasss','dcr2_RicVfWn.jpg','shajinik75@gmail.com',9400979650,'female','Msc Nutrition',5,'SDFGH123',17);
 
 /*Table structure for table `health_reminder` */
 
@@ -552,12 +593,15 @@ CREATE TABLE `health_reminder` (
   PRIMARY KEY (`id`),
   KEY `health_reminder_lid_id_6a32451d_fk_health_login_id` (`lid_id`),
   CONSTRAINT `health_reminder_lid_id_6a32451d_fk_health_login_id` FOREIGN KEY (`lid_id`) REFERENCES `health_login` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=64 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=68 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `health_reminder` */
 
 insert  into `health_reminder`(`id`,`medicine`,`startdate`,`enddate`,`num`,`lid_id`) values 
-(63,'dolo','2023-04-19','2023-04-26',3,3);
+(63,'dolo','2023-04-19','2023-04-26',3,3),
+(64,'antibiotic','2023-04-27','2023-04-30',2,3),
+(66,'cutihyde','2023-04-24','2023-04-30',1,3),
+(67,'sgff','2023-04-25','2023-04-29',0,3);
 
 /*Table structure for table `health_reviewrating` */
 
@@ -575,16 +619,14 @@ CREATE TABLE `health_reviewrating` (
   KEY `health_reviewrating_nid_id_a31bb50c_fk_health_nutritionist_id` (`nid_id`),
   CONSTRAINT `health_reviewrating_nid_id_a31bb50c_fk_health_nutritionist_id` FOREIGN KEY (`nid_id`) REFERENCES `health_nutritionist` (`id`),
   CONSTRAINT `health_reviewrating_uid_id_26d7622e_fk_health_user_id` FOREIGN KEY (`uid_id`) REFERENCES `health_user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `health_reviewrating` */
 
 insert  into `health_reviewrating`(`id`,`review`,`rating`,`date`,`uid_id`,`nid_id`) values 
-(4,'excellent',1.5,'2023-04-17',2,1),
-(5,'bad',3,'2023-04-17',2,1),
-(6,'good',3,'2023-04-18',2,1),
-(7,'Excellent',4.5,'2023-04-20',2,2),
-(8,'brurir',5,'2023-04-21',2,3);
+(9,'good',2,'2023-04-28',2,4),
+(10,'bad',1,'2023-04-28',11,4),
+(11,'excellent',3.5,'2023-04-28',11,5);
 
 /*Table structure for table `health_user` */
 
@@ -600,7 +642,7 @@ CREATE TABLE `health_user` (
   PRIMARY KEY (`id`),
   KEY `health_user_lid_id_fe505ee9_fk_health_login_id` (`lid_id`),
   CONSTRAINT `health_user_lid_id_fe505ee9_fk_health_login_id` FOREIGN KEY (`lid_id`) REFERENCES `health_login` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `health_user` */
 
@@ -608,7 +650,8 @@ insert  into `health_user`(`id`,`name`,`email`,`mobile`,`gender`,`lid_id`) value
 (2,'Aneetha','anuaneetha2000@gmail.com',8848644022,'Female',3),
 (10,'Sanan','sanan@gmail.com',9061697367,'Male',11),
 (11,'Ameena','ami@gmail.com',8921383950,'Female',12),
-(12,'Raniya','rani@gmail.com',9988776655,'Female',13);
+(12,'Raniya','rani@gmail.com',9988776655,'Female',13),
+(14,'Shamna','shamnammukkam@gmail.com',8848644022,'Female',18);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
